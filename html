@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXAR ESPORTS - TDM Tournaments</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #09090b;
+            color: #ffffff;
+            padding: 16px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Branding Header */
+        .header {
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .brand-logo-text {
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            font-size: 42px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: #ffffff;
+            text-transform: uppercase;
+            line-height: 0.9;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .brand-sub {
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            color: #ff2424;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: lowercase;
+            margin-top: -2px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            color: #888;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            border-left: 3px solid #ff2424;
+            padding-left: 8px;
+        }
+
+        /* Tournament Card Design */
+        .card {
+            background: linear-gradient(145deg, #141416, #0d0d0f);
+            border: 1px solid #222226;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 16px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .card:active {
+            transform: scale(0.99);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #1a1a1e;
+            padding-bottom: 10px;
+        }
+
+        .tourney-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .badge {
+            background: rgba(255, 36, 36, 0.15);
+            color: #ff3b3b;
+            border: 1px solid rgba(255, 36, 36, 0.4);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .info-item {
+            background: #0a0a0c;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #18181c;
+        }
+
+        .info-item strong {
+            display: block;
+            color: #fff;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        /* Action Button */
+        .btn-register {
+            width: 100%;
+            background: #ff2424;
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 36, 36, 0.3);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-register:active {
+            background: #e01b1b;
+            transform: translateY(1px);
+        }
+
+        .admin-footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .admin-footer a {
+            color: #ff2424;
+            text-decoration: none;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Logo Branding -->
+        <div class="header">
+            <div class="brand-logo-text">NEXAR</div>
+            <div class="brand-sub">esports</div>
+        </div>
+
+        <div class="section-title">Aktiv TDM Turnirlar</div>
+
+        <div id="tournaments-list">
+            <!-- Dynamic Turnirlar shu yerga joylashadi -->
+        </div>
+
+        <div class="admin-footer">
+            Tashkilotchi: <a href="https://t.me/mirzhayev" target="_blank">@mirzhayev</a>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.enableClosingConfirmation();
+
+        // Turnirlar ma'lumotlari ro'yxati
+        const tournaments = [
+            { 
+                id: "tdm_1v1_m416", 
+                name: "1v1 Warehouse Clash", 
+                mode: "M416 Only", 
+                price: "10,000 UZS", 
+                prize: "100,000 UZS", 
+                time: "Bugun, 20:00" 
+            },
+            { 
+                id: "tdm_4v4_squad", 
+                name: "4v4 Squad TDM Night", 
+                mode: "Classic Squad TDM", 
+                price: "40,000 UZS", 
+                prize: "400,000 UZS", 
+                time: "Ertaga, 21:00" 
+            }
+        ];
+
+        function renderTournaments() {
+            const container = document.getElementById('tournaments-list');
+            container.innerHTML = tournaments.map(t => `
+                <div class="card">
+                    <div class="card-header">
+                        <div class="tourney-title">${t.name}</div>
+                        <div class="badge">O'rinlar bor</div>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            Rejim
+                            <strong>${t.mode}</strong>
+                        </div>
+                        <div class="info-item">
+                            Boshlanishi
+                            <strong>${t.time}</strong>
+                        </div>
+                        <div class="info-item">
+                            Kirish narxi
+                            <strong>${t.price}</strong>
+                        </div>
+                        <div class="info-item">
+                            Mukofot jamg'armasi
+                            <strong style="color: #4cd964;">${t.prize}</strong>
+                        </div>
+                    </div>
+                    <button class="btn-register" onclick="registerTourney('${t.id}', '${t.name}')">Ro'yxatdan o'tish</button>
+                </div>
+            `).join('');
+        }
+
+        function registerTourney(id, name) {
+            // Telegram botga ma'lumot yuborish
+            tg.sendData(JSON.stringify({ 
+                action: 'register', 
+                tourney_id: id, 
+                tourney_name: name 
+            }));
+            
+            // Oyna avtomatik yopilishi uchun
+            tg.close();
+        }
+
+        renderTournaments();
+    </script>
+</body>

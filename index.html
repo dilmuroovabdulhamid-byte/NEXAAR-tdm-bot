@@ -7,16 +7,54 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #0d0d11; color: #fff; padding: 16px; padding-bottom: 30px; }
+        body { background-color: #0d0d11; color: #fff; padding-bottom: 30px; }
         
-        .user-info { background: #16161e; border-radius: 14px; padding: 16px; margin-bottom: 16px; border: 1px solid #232330; }
-        .greeting { font-size: 18px; font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-        .balance { font-size: 15px; color: #b0b0c0; }
+        /* Youtube Uslubidagi Banner va Profil qismi */
+        .profile-header { position: relative; margin-bottom: 25px; }
+        
+        /* Banner (To'rtburchak Orqa Fon) */
+        .banner { 
+            width: 100%; 
+            height: 130px; 
+            background: linear-gradient(135deg, #1f0505 0%, #ff2424 50%, #0a0a0d 100%); 
+            background-size: cover;
+            background-position: center;
+            border-bottom: 2px solid #ff2424; 
+        }
+        
+        /* Banner ustidagi Dumaloq Logo va Matn */
+        .avatar-container { 
+            position: absolute; 
+            bottom: -25px; 
+            left: 16px; 
+            display: flex; 
+            align-items: flex-end; 
+            gap: 12px; 
+        }
+        
+        .avatar { 
+            width: 70px; 
+            height: 70px; 
+            border-radius: 50%; 
+            border: 3px solid #0d0d11; 
+            background-color: #000; 
+            object-fit: cover; 
+            box-shadow: 0 4px 12px rgba(255, 36, 36, 0.4); 
+        }
+        
+        .brand-info { margin-bottom: 6px; }
+        .brand-name { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: 1px; text-transform: uppercase; line-height: 1; }
+        .brand-sub { font-size: 11px; color: #ff2424; font-weight: bold; letter-spacing: 2px; text-transform: uppercase; }
+
+        .container { padding: 0 16px; }
+
+        .user-info { background: #16161e; border-radius: 14px; padding: 14px 16px; margin-top: 35px; margin-bottom: 16px; border: 1px solid #232330; display: flex; justify-content: space-between; align-items: center; }
+        .greeting { font-size: 15px; font-weight: bold; }
+        .balance { font-size: 14px; color: #b0b0c0; }
         .balance span { color: #4cd964; font-weight: bold; }
 
         .section-title { font-size: 13px; color: #888899; margin-bottom: 12px; }
 
-        /* General Button List Layout */
         .menu-list { display: flex; flex-direction: column; gap: 10px; }
         
         .menu-btn { 
@@ -34,17 +72,14 @@
             cursor: pointer; 
             width: 100%;
             text-decoration: none;
-            transition: background 0.2s;
         }
         .menu-btn:active { background: #252535; }
         .menu-btn span { font-size: 18px; }
 
-        /* Modal / View Box */
         .content-view { display: none; margin-top: 15px; background: #16161e; border-radius: 14px; padding: 14px; border: 1px solid #232330; }
         .content-view.active { display: block; }
         .back-btn { background: #ff2424; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; margin-bottom: 12px; cursor: pointer; }
         
-        /* Card Items */
         .item-card { background: #0d0d11; border: 1px solid #232330; border-radius: 10px; padding: 12px; margin-bottom: 10px; }
         .item-title { font-size: 15px; font-weight: bold; margin-bottom: 4px; }
         .item-desc { font-size: 12px; color: #aaa; margin-bottom: 8px; }
@@ -53,91 +88,93 @@
 </head>
 <body>
 
-    <!-- Upper User Profile & Balance -->
-    <div class="user-info">
-        <div class="greeting">👋 Salom, <span id="user-name">APEX BRO</span>!</div>
-        <div class="balance">💰 Balans: <span id="user-balance">0 so'm</span></div>
-    </div>
-
-    <div class="section-title">Kerakli bo'limni tanlang 👇</div>
-
-    <!-- Main Menu List -->
-    <div id="main-menu" class="menu-list">
-        <button class="menu-btn" onclick="openSection('tournaments')"><span>🎮</span> Turnirlar</button>
-        <button class="menu-btn" onclick="openSection('services')"><span>🛠</span> Xizmatlar</button>
-        <button class="menu-btn" onclick="openSection('account')"><span>💰</span> Hisobim</button>
-        <button class="menu-btn" onclick="openSection('temp-accounts')"><span>👤</span> Turnir akkauntlari</button>
-        
-        <!-- Account Sale redirects directly to Telegram Channel -->
-        <a href="https://t.me/apexpubgmn1" class="menu-btn" target="_blank"><span>🛒</span> Akaunt savdo</a>
-        
-        <button class="menu-btn" onclick="openSection('orders')"><span>📋</span> Mening buyurtmalarim</button>
-        <button class="menu-btn" onclick="openSection('admin')"><span>📞</span> Admin bilan aloqa</button>
-    </div>
-
-    <!-- Sub-sections Containers -->
-    
-    <!-- 1. Turnirlar -->
-    <div id="sec-tournaments" class="content-view">
-        <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
-        <h3>🎮 Turnirlar ro'yxati</h3>
-        <br>
-        <div class="item-card">
-            <div class="item-title">1v1 M416 Glacier Clash</div>
-            <div class="item-desc">Kirish: 10,000 UZS | Priz: 100,000 UZS</div>
-            <button class="action-btn" onclick="sendToAdmin('1v1 Glacier Clash Turniri')">Qatnashish</button>
+    <!-- YouTube uslubida Top Banner + Avatar -->
+    <div class="profile-header">
+        <div class="banner"></div>
+        <div class="avatar-container">
+            <!-- NEXAR Logotipi -->
+            <img src="logo.jpg" class="avatar" alt="NEXAR Logo" onerror="this.src='https://raw.githubusercontent.com/mirzhayev/fungo-shop/main/logo.jpg'">
+            <div class="brand-info">
+                <div class="brand-name">NEXAR</div>
+                <div class="brand-sub">Esports</div>
+            </div>
         </div>
     </div>
 
-    <!-- 2. Xizmatlar -->
-    <div id="sec-services" class="content-view">
-        <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
-        <h3>🛠 Xizmatlar va UC</h3>
-        <br>
-        <div class="item-card">
-            <div class="item-title">60 UC</div>
-            <div class="item-desc">Narxi: 13,000 UZS</div>
-            <button class="action-btn" onclick="sendToAdmin('60 UC xarid')">Sotib olish</button>
+    <div class="container">
+        <div class="user-info">
+            <div class="greeting">👋 <span id="user-name">Foydalanuvchi</span></div>
+            <div class="balance">💰 Balans: <span id="user-balance">0 so'm</span></div>
         </div>
-    </div>
 
-    <!-- 3. Hisobim -->
-    <div id="sec-account" class="content-view">
-        <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
-        <h3>💰 Hisob holati</h3>
-        <br>
-        <p>Joriy balansingiz: <b>0 so'm</b></p>
-        <br>
-        <button class="action-btn" onclick="sendToAdmin('Hisobni to\'ldirish')">💳 Hisobni to'ldirish</button>
-    </div>
+        <div class="section-title">Bo'limni tanlang 👇</div>
 
-    <!-- 4. Turnir akkauntlari -->
-    <div id="sec-temp-accounts" class="content-view">
-        <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
-        <h3>👤 Turnir uchun vaqtinchalik akkauntlar</h3>
-        <br>
-        <div class="item-card">
-            <div class="item-title">PUBG Acc #1 (M416 Full)</div>
-            <div class="item-desc">Turnir vaqtida o'ynab turish uchun beriladi.</div>
-            <button class="action-btn" onclick="sendToAdmin('Turnir akkauntini olish #1')">Akkauntni so'rash</button>
+        <div id="main-menu" class="menu-list">
+            <button class="menu-btn" onclick="openSection('tournaments')"><span>🎮</span> Turnirlar</button>
+            <button class="menu-btn" onclick="openSection('services')"><span>🛠</span> Xizmatlar</button>
+            <button class="menu-btn" onclick="openSection('account')"><span>💰</span> Hisobim</button>
+            <button class="menu-btn" onclick="openSection('temp-accounts')"><span>👤</span> Turnir akkauntlari</button>
+            <a href="https://t.me/apexpubgmn1" class="menu-btn" target="_blank"><span>🛒</span> Akaunt savdo</a>
+            <button class="menu-btn" onclick="openSection('orders')"><span>📋</span> Mening buyurtmalarim</button>
+            <button class="menu-btn" onclick="openSection('admin')"><span>📞</span> Admin bilan aloqa</button>
         </div>
-    </div>
 
-    <!-- 5. Mening buyurtmalarim -->
-    <div id="sec-orders" class="content-view">
-        <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
-        <h3>📋 Buyurtmalar tarixi</h3>
-        <br>
-        <p style="color: #888;">Sizda hali faol buyurtmalar yo'q.</p>
-    </div>
+        <!-- Bo'limlar ichi -->
+        <div id="sec-tournaments" class="content-view">
+            <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
+            <h3>🎮 Turnirlar ro'yxati</h3>
+            <br>
+            <div class="item-card">
+                <div class="item-title">1v1 M416 Glacier Clash</div>
+                <div class="item-desc">Kirish: 10,000 UZS | Priz: 100,000 UZS</div>
+                <button class="action-btn" onclick="sendToAdmin('1v1 Glacier Clash Turniri')">Qatnashish</button>
+            </div>
+        </div>
 
-    <!-- 6. Admin bilan aloqa (Faqat Admin Useri) -->
-    <div id="sec-admin" class="content-view">
-        <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
-        <h3>📞 Admin bilan aloqa</h3>
-        <br>
-        <p style="margin-bottom: 12px; color: #aaa;">Savollar va murojaatlar uchun rasmiy admin:</p>
-        <button class="action-btn" style="background: #0088cc; color: #fff;" onclick="openAdminChat()">💬 @mirzhayev ga yozish</button>
+        <div id="sec-services" class="content-view">
+            <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
+            <h3>🛠 Xizmatlar va UC</h3>
+            <br>
+            <div class="item-card">
+                <div class="item-title">60 UC</div>
+                <div class="item-desc">Narxi: 13,000 UZS</div>
+                <button class="action-btn" onclick="sendToAdmin('60 UC xarid')">Sotib olish</button>
+            </div>
+        </div>
+
+        <div id="sec-account" class="content-view">
+            <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
+            <h3>💰 Hisob holati</h3>
+            <br>
+            <p>Joriy balansingiz: <b>0 so'm</b></p>
+            <br>
+            <button class="action-btn" onclick="sendToAdmin('Hisobni to\'ldirish')">💳 Hisobni to'ldirish</button>
+        </div>
+
+        <div id="sec-temp-accounts" class="content-view">
+            <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
+            <h3>👤 Turnir akkauntlari</h3>
+            <br>
+            <div class="item-card">
+                <div class="item-title">PUBG Acc #1 (M416 Full)</div>
+                <div class="item-desc">Turnir vaqtida o'ynab turish uchun beriladi.</div>
+                <button class="action-btn" onclick="sendToAdmin('Turnir akkauntini olish #1')">Akkauntni so'rash</button>
+            </div>
+        </div>
+
+        <div id="sec-orders" class="content-view">
+            <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
+            <h3>📋 Buyurtmalar tarixi</h3>
+            <br>
+            <p style="color: #888;">Sizda hali faol buyurtmalar yo'q.</p>
+        </div>
+
+        <div id="sec-admin" class="content-view">
+            <button class="back-btn" onclick="closeSection()">⬅ Orqaga</button>
+            <h3>📞 Admin bilan aloqa</h3>
+            <br>
+            <button class="action-btn" style="background: #0088cc; color: #fff;" onclick="openAdminChat()">💬 @mirzhayev ga yozish</button>
+        </div>
     </div>
 
     <script>

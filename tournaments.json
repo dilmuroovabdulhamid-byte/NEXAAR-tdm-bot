@@ -1,0 +1,20 @@
+[
+  {
+    "id": "tourney_1",
+    "title": "1v1 M416 Glacier Clash",
+    "mode": "1v1 TDM",
+    "price": "10,000 UZS",
+    "prize": "100,000 UZS",
+    "time": "Bugun, 21:00",
+    "img": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=500"
+  },
+  {
+    "id": "tourney_2",
+    "title": "4v4 Squad TDM Night",
+    "mode": "4v4 Classic",
+    "price": "40,000 UZS",
+    "prize": "400,000 UZS",
+    "time": "Ertaga, 20:00",
+    "img": "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=500"
+  }
+]
